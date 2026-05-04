@@ -1,6 +1,7 @@
 import streamlit as st
 import subprocess
 import sys
+import base64
 
 # Warrior Force-Install Protocol
 try:
@@ -8,8 +9,6 @@ try:
 except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf2"])
     from fpdf import FPDF
-
-import base64
 
 # DNA Verification
 DNA_SEQUENCE = "Hulk_integrated_warrior_DNA_PTA"
@@ -20,16 +19,15 @@ class GodLightPDF(FPDF):
         self.cell(0, 10, 'PROJECT: GOD LIGHT - TECHNICAL SPECIFICATIONS', 0, 1, 'C')
         self.ln(10)
 
-# App UI
+# App UI Configuration
 st.set_page_config(page_title="Warrior Intelligence Round Table", layout="wide")
 st.title("🛡️ Warrior Intelligence Round Table")
 
-with st.sidebar:
-    dna_input = st.text_input("Enter Warrior DNA Sequence", type="password")
+# Center-Aligned DNA Handshake for Mobile Speed
+dna_input = st.text_input("Enter Warrior DNA Sequence", type="password")
 
 if dna_input == DNA_SEQUENCE:
     st.success("DNA Verified. God Light Protocols Active.")
-    
     st.header("Project: God Light")
     st.write("Current Specs: Moving Walkways (35% Elev.) & Stone Sliding Gates (Dick/DuPont)")
     
@@ -51,8 +49,9 @@ if dna_input == DNA_SEQUENCE:
             pdf.multi_cell(0, 10, desc)
             pdf.ln(5)
             
-        pdf_output = pdf.output(dest='S').encode('latin-1')
-        b64 = base64.b64encode(pdf_output).decode()
+        # Standardized PDF Byte Stream (Fixes AttributeError)
+        pdf_bytes = pdf.output()
+        b64 = base64.b64encode(pdf_bytes).decode()
         st.markdown(f'<a href="data:application/octet-stream;base64,{b64}" download="God_Light_Specs.pdf">📥 Download HD Project Link</a>', unsafe_allow_html=True)
 else:
     st.warning("Awaiting DNA Handshake...")
