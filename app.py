@@ -1,7 +1,10 @@
 import streamlit as st
-from fpdf2 import FPDF
+from fpdf import FPDF
 import io
 from datetime import datetime
+
+# DNA Verification Layer - LOCKED CONSTANT
+DNA_SEQUENCE = "Hulk_integrated_warrior_DNA_PTA"
 
 st.set_page_config(page_title="DNA Code to PDF Translator", layout="wide")
 
@@ -10,6 +13,10 @@ st.markdown("*Convert DNA Verification Code → Process → Generate Downloadabl
 
 # Sidebar for settings
 with st.sidebar:
+    st.header("🔐 DNA Verification")
+    dna_verify = st.text_input("Enter DNA Sequence:", value=DNA_SEQUENCE, type="password", key="dna_verify")
+    
+    st.markdown("---")
     st.header("⚙️ Settings")
     pdf_quality = st.selectbox("PDF Quality", ["Standard", "HD", "Ultra HD"])
     author_name = st.text_input("Author Name (optional)", placeholder="Your name")
