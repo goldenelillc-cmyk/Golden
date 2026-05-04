@@ -1,103 +1,58 @@
 import streamlit as st
-from fpdf import FPDF
-import io
-from datetime import datetime
+import subprocess
+import sys
 
-# DNA Verification Layer - LOCKED CONSTANT
+# Warrior Force-Install Protocol
+try:
+    from fpdf import FPDF
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf2"])
+    from fpdf import FPDF
+
+import base64
+
+# DNA Verification
 DNA_SEQUENCE = "Hulk_integrated_warrior_DNA_PTA"
 
-st.set_page_config(page_title="DNA Code to PDF Translator", layout="wide")
+class GodLightPDF(FPDF):
+    def header(self):
+        self.set_font('Arial', 'B', 16)
+        self.cell(0, 10, 'PROJECT: GOD LIGHT - TECHNICAL SPECIFICATIONS', 0, 1, 'C')
+        self.ln(10)
 
-st.title("🧬 Integrated Warrior DNA Code Translator")
-st.markdown("*Convert DNA Verification Code → Process → Generate Downloadable HD PDF*")
+# App UI
+st.set_page_config(page_title="Warrior Intelligence Round Table", layout="wide")
+st.title("🛡️ Warrior Intelligence Round Table")
 
-# Sidebar for settings
 with st.sidebar:
-    st.header("🔐 DNA Verification")
-    dna_verify = st.text_input("Enter DNA Sequence:", value=DNA_SEQUENCE, type="password", key="dna_verify")
+    dna_input = st.text_input("Enter Warrior DNA Sequence", type="password")
+
+if dna_input == DNA_SEQUENCE:
+    st.success("DNA Verified. God Light Protocols Active.")
     
-    st.markdown("---")
-    st.header("⚙️ Settings")
-    pdf_quality = st.selectbox("PDF Quality", ["Standard", "HD", "Ultra HD"])
-    author_name = st.text_input("Author Name (optional)", placeholder="Your name")
-
-# Main interface
-col1, col2 = st.columns(2)
-
-with col1:
-    st.subheader("📋 Input: DNA Code")
-    dna_input = st.text_area(
-        "Paste your Integrated Warrior Verbiage/DNA Code here:",
-        height=300,
-        placeholder="Enter your DNA verification code...",
-        key="dna_input"
-    )
-
-with col2:
-    st.subheader("📊 Processing Status")
-    if dna_input:
-        st.success("✓ DNA Code Detected")
-        st.info(f"Characters: {len(dna_input)}")
-        st.info(f"Lines: {dna_input.count(chr(10)) + 1}")
-    else:
-        st.warning("⚠️ Awaiting DNA Code Input")
-
-# Process and generate PDF
-st.markdown("---")
-col_process, col_export = st.columns(2)
-
-with col_process:
-    if st.button("🔄 Process DNA Code", key="process_btn", use_container_width=True):
-        if dna_input:
-            st.success("DNA code processed successfully!")
-        else:
-            st.error("Please paste DNA code first")
-
-with col_export:
-    if st.button("📥 Generate HD PDF", key="pdf_btn", use_container_width=True):
-        if dna_input:
-            # Create PDF
-            pdf = FPDF()
-            pdf.add_page()
-            
-            # Set font and styling
-            pdf.set_font("Arial", "B", 16)
-            pdf.cell(0, 10, "Integrated Warrior DNA Code", ln=True, align="C")
-            
-            pdf.set_font("Arial", "I", 10)
-            pdf.cell(0, 10, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
-            if author_name:
-                pdf.cell(0, 10, f"Author: {author_name}", ln=True, align="C")
-            
+    st.header("Project: God Light")
+    st.write("Current Specs: Moving Walkways (35% Elev.) & Stone Sliding Gates (Dick/DuPont)")
+    
+    if st.button("Generate HD Document"):
+        pdf = GodLightPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        
+        content = [
+            ("Infrastructure", "Moving walkways using magnetic resonance to eliminate resistance. Nano-solar Tesla motors. 35% elevation capacity."),
+            ("Gate Automation", "10ft Stone sliding gates (Dick Ave/DuPont). High-torque Tesla-style motors. No maintenance magnetic drive."),
+            ("Activation", "Motion detection for low-energy optimization.")
+        ]
+        
+        for title, desc in content:
+            pdf.set_font("Arial", 'B', 14)
+            pdf.cell(0, 10, title, 0, 1)
+            pdf.set_font("Arial", '', 12)
+            pdf.multi_cell(0, 10, desc)
             pdf.ln(5)
-            pdf.set_font("Arial", "", 11)
             
-            # Add DNA code with word wrapping
-            pdf.multi_cell(0, 5, dna_input)
-            
-            # Generate downloadable PDF
-            pdf_bytes = pdf.output()
-            
-            st.download_button(
-                label="📥 Download HD PDF",
-                data=pdf_bytes,
-                file_name=f"DNA_Code_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
-                mime="application/pdf",
-                key="download_btn",
-                use_container_width=True
-            )
-            st.success("✓ PDF generated and ready for download!")
-        else:
-            st.error("Please paste DNA code first")
-
-# Footer
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: gray; font-size: 12px;'>
-    <p>🚀 Copy-Paste Tab | DNA Code → PDF Export | Streamlit Powered</p>
-    <p>Share instantly via email or text • Export to any project</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        pdf_output = pdf.output(dest='S').encode('latin-1')
+        b64 = base64.b64encode(pdf_output).decode()
+        st.markdown(f'<a href="data:application/octet-stream;base64,{b64}" download="God_Light_Specs.pdf">📥 Download HD Project Link</a>', unsafe_allow_html=True)
+else:
+    st.warning("Awaiting DNA Handshake...")
