@@ -1,6 +1,6 @@
 import streamlit as st
 import subprocess
-import sys
+import s
 import base64
 
 # Warrior Force-Install Protocol
